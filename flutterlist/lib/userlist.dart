@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterlist/firebase_service.dart';
 import 'package:flutterlist/userdata.dart';
 import 'package:flutterlist/useritem.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,17 +12,15 @@ class UserList extends StatefulWidget {
 }
 
 class _UserListState extends State<UserList> {
+  FirebaseService firebaseService = new FirebaseService();
+
   TextEditingController nama = TextEditingController();
 
-  TextEditingController umur = TextEditingController();
+  TextEditingController npm = TextEditingController();
 
   TextEditingController email = TextEditingController();
 
-  List<UserData> daftarUser = [
-    UserData("idris", 34, "idrez.mochamad@gmail.com"),
-    UserData("adi", 24, "adi@gmail.com"),
-    UserData("rizal", 33, "rizal.mochamad@gmail.com"),
-  ];
+  List<UserData> daftarUser = [];
 
   Color btnSimpanColorDefault = Colors.blue;
   Color btnSimpanColor = Colors.blue;
@@ -52,10 +52,10 @@ class _UserListState extends State<UserList> {
             Container(
               padding: EdgeInsets.all(5),
               child: TextField(
-                controller: umur,
+                controller: npm,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                    labelText: "Umur", border: OutlineInputBorder()),
+                    labelText: "NPM", border: OutlineInputBorder()),
               ),
             ),
             Container(
@@ -76,19 +76,20 @@ class _UserListState extends State<UserList> {
                     onPressed: () {
                       try {
                         if (nama.text.isEmpty ||
-                            umur.text.isEmpty ||
+                            npm.text.isEmpty ||
                             email.text.isEmpty)
                           throw ("Data tidak boleh kosong");
 
                         if (btnSimpanText == btnSimpanTextDefault) {
                           // INI MENUNJUKAN SAVE
-                          daftarUser.add(UserData(
-                              nama.text, int.parse(umur.text), email.text));
+                          UserData userData = new UserData(nama.text, int.parse(npm.text), email.text);
+                          firebaseService.tambah(userData);
+                          //daftarUser.add(UserData(nama.text, int.parse(npm.text), email.text));
                         } else {
                           UserData userData =
                               daftarUser[selectedDaftarUserIndex];
                           userData.nama = nama.text;
-                          userData.umur = int.parse(umur.text);
+                          userData.npm = int.parse(npm.text);
                           userData.email = email.text;
                           daftarUser[selectedDaftarUserIndex] = userData;
                           btnSimpanColor = btnSimpanColorDefault;
@@ -104,7 +105,7 @@ class _UserListState extends State<UserList> {
                         });
 
                         nama.text = "";
-                        umur.text = "";
+                        npm.text = "";
                         email.text = "";
                       } catch (e) {
                         Fluttertoast.showToast(msg: '$e');
@@ -122,7 +123,7 @@ class _UserListState extends State<UserList> {
                   child: ElevatedButton(
                     onPressed: () {
                       nama.text = "";
-                      umur.text = "";
+                      npm.text = "";
                       email.text = "";
                       btnSimpanColor = btnSimpanColorDefault;
                       btnSimpanText = btnSimpanTextDefault;
@@ -155,7 +156,7 @@ class _UserListState extends State<UserList> {
                         child: UserItem(daftarUser[index]),
                         onTap: () {
                           nama.text = daftarUser[index].nama;
-                          umur.text = daftarUser[index].umur.toString();
+                          npm.text = daftarUser[index].npm.toString();
                           email.text = daftarUser[index].email;
                           btnSimpanColor = btnUbahColor;
                           btnSimpanText = btnUbahText;

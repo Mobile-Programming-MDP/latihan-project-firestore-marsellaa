@@ -44,8 +44,8 @@ class _UserItemState extends State<UserItem> {
                   widget.userData.nama,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text("Umur : " +
-                    widget.userData.umur.toString() +
+                Text("NPM : " +
+                    widget.userData.npm.toString() +
                     " " +
                     "Email : " +
                     widget.userData.email),
