@@ -12,6 +12,7 @@ dependencies:
   firebase_storage: ^11.6.0
   flutter:
     sdk: flutter
+  geolocator: ^11.1.0
   get: ^4.6.6
   image_picker: ^1.0.8
   path: ^1.8.3
