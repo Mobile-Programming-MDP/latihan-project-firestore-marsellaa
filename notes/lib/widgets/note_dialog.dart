@@ -131,6 +131,13 @@ class _NoteDialogState extends State<NoteDialog> {
               title: _titleController.text,
               description: _descriptionController.text,
               imageUrl: imageUrl,
+              lat: widget.note?.lat.toString() != _position!.latitude.toString()
+                  ? _position!.latitude.toString()
+                  : widget.note?.lat.toString(),
+              lng:
+                  widget.note?.lng.toString() != _position!.longitude.toString()
+                      ? _position!.longitude.toString()
+                      : widget.note?.lng.toString(),
               createdAt: widget.note?.createdAt,
             );
 
