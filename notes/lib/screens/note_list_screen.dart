@@ -152,7 +152,7 @@ class NoteList extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert; aaaaaaa
+        return alert;
       },
     );
   }
