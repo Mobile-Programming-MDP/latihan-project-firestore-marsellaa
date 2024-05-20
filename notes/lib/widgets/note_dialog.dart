@@ -101,7 +101,7 @@ class _NoteDialogState extends State<NoteDialog> {
           ),
           Text(
             _position?.latitude != null && _position?.longitude != null
-                ? 'Current Position :  ${_position!.latitude.toString()}'
+                ? 'Current Position : ${_position!.longitude.toString()}, ${_position!.latitude.toString()}'
                 : '',
             textAlign: TextAlign.start,
           )

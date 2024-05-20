@@ -23,20 +23,11 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -55,6 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '287529297350',
     projectId: 'notes-e6ed6',
     authDomain: 'notes-e6ed6.firebaseapp.com',
+    databaseURL: 'https://notes-e6ed6-default-rtdb.firebaseio.com',
     storageBucket: 'notes-e6ed6.appspot.com',
   );
 
@@ -63,6 +55,38 @@ class DefaultFirebaseOptions {
     appId: '1:287529297350:android:236b3a8ae516bee6e3bec7',
     messagingSenderId: '287529297350',
     projectId: 'notes-e6ed6',
+    databaseURL: 'https://notes-e6ed6-default-rtdb.firebaseio.com',
     storageBucket: 'notes-e6ed6.appspot.com',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDxW2C54hPKjn8N7bgB67yd8mlx6SRK4Fk',
+    appId: '1:287529297350:ios:bf9f88b06c34e737e3bec7',
+    messagingSenderId: '287529297350',
+    projectId: 'notes-e6ed6',
+    databaseURL: 'https://notes-e6ed6-default-rtdb.firebaseio.com',
+    storageBucket: 'notes-e6ed6.appspot.com',
+    iosBundleId: 'com.example.notes',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDxW2C54hPKjn8N7bgB67yd8mlx6SRK4Fk',
+    appId: '1:287529297350:ios:bf9f88b06c34e737e3bec7',
+    messagingSenderId: '287529297350',
+    projectId: 'notes-e6ed6',
+    databaseURL: 'https://notes-e6ed6-default-rtdb.firebaseio.com',
+    storageBucket: 'notes-e6ed6.appspot.com',
+    iosBundleId: 'com.example.notes',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDFT7ato4E-GiLxnESa0LZUvIociRDIhFs',
+    appId: '1:287529297350:web:957e8fcd6b56bbebe3bec7',
+    messagingSenderId: '287529297350',
+    projectId: 'notes-e6ed6',
+    authDomain: 'notes-e6ed6.firebaseapp.com',
+    databaseURL: 'https://notes-e6ed6-default-rtdb.firebaseio.com',
+    storageBucket: 'notes-e6ed6.appspot.com',
+  );
+
 }
