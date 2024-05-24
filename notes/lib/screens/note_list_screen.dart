@@ -1,7 +1,9 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notes/models/note.dart';
+import 'package:notes/screens/google_maps_screen.dart';
 import 'package:notes/screens/map_screen.dart';
 import 'package:notes/services/note_service.dart';
 import 'package:notes/widgets/note_dialog.dart';
@@ -79,8 +81,8 @@ class NoteList extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          MapScreen(document.lat, document.lng),
+                                      builder: (context) => GoogleMapsScreen(
+                                          document.lat, document.lng),
                                     ),
                                   );
                                 },
