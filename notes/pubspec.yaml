@@ -20,6 +20,7 @@ dependencies:
   image_picker: ^1.0.8
   latlong2: ^0.9.1
   path: ^1.8.3
+  provider: ^6.1.2
   url_launcher: ^6.2.4
 
 dev_dependencies:

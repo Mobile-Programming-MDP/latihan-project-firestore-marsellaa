@@ -7,6 +7,7 @@ import 'package:notes/screens/google_maps_screen.dart';
 import 'package:notes/screens/map_screen.dart';
 import 'package:notes/services/note_service.dart';
 import 'package:notes/widgets/note_dialog.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NoteListScreen extends StatefulWidget {
@@ -19,9 +20,25 @@ class NoteListScreen extends StatefulWidget {
 class _NoteListScreenState extends State<NoteListScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDarkTheme = Provider.of<ValueNotifier<bool>>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notes'),
+        actions: [
+         Row(
+            children: [
+              Icon(isDarkTheme.value ? Icons.nights_stay : Icons.wb_sunny),
+              Switch(
+                value: isDarkTheme.value,
+                onChanged: (value) {
+                  isDarkTheme.value = value;
+                },
+                activeColor: Colors.white,
+              ),
+            ],
+          ),
+        ],
       ),
       body: const NoteList(),
       floatingActionButton: FloatingActionButton(
