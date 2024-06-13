@@ -1,5 +1,6 @@
 import 'dart:html';
-
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notes/models/note.dart';
@@ -7,7 +8,9 @@ import 'package:notes/screens/google_maps_screen.dart';
 import 'package:notes/screens/map_screen.dart';
 import 'package:notes/services/note_service.dart';
 import 'package:notes/widgets/note_dialog.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NoteListScreen extends StatefulWidget {
@@ -78,12 +81,30 @@ class NoteList extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 80),
               children: snapshot.data!.map((document) {
                 return Card(
-                  child: ListTile(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return NoteDialog(note: document);
+                  child: Column(
+                    children: [
+                      document.imageUrl != null &&
+                              Uri.parse(document.imageUrl!).isAbsolute
+                          ? ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(16),
+                              ),
+                              child: Image.network(
+                                document.imageUrl!,
+                                width: double.infinity,
+                                height: 150,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                              ),
+                            )
+                          : Container(),            
+                    ListTile(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return NoteDialog(note: document);
                         },
                       );
                     },
@@ -121,8 +142,19 @@ class NoteList extends StatelessWidget {
                             child: Icon(Icons.delete),
                           ),
                         ),
+                         InkWell(
+                          onTap: () async {
+                            await _shareNote(document);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Icon(Icons.share),
+                          ),
+                        ),
                       ],
                     ),
+                  ),
+                    ],
                   ),
                 );
               }).toList(),
@@ -174,5 +206,12 @@ class NoteList extends StatelessWidget {
         return alert;
       },
     );
+  }
+    Future<void> _shareNote(Note document) async {
+    String noteContent = 'Title: ${document.title}\nDescription: ${document.description}';
+    if (document.imageUrl != null && document.imageUrl!.isNotEmpty) {
+      noteContent += '\n\nImage: ${document.imageUrl!}';
+    }
+    Share.share(noteContent);
   }
 }

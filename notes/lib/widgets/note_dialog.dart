@@ -1,5 +1,5 @@
 import 'dart:html';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +7,10 @@ import 'package:notes/models/note.dart';
 import 'package:notes/services/location_service.dart';
 import 'package:notes/services/note_service.dart';
 import 'package:path/path.dart';
+import 'package:camera/camera.dart';
+import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
+
 
 class NoteDialog extends StatefulWidget {
   final Note? note;
@@ -22,6 +26,9 @@ class _NoteDialogState extends State<NoteDialog> {
   final TextEditingController _descriptionController = TextEditingController();
   XFile? _imageFile;
   Position? _position;
+  Uint8List? _imageBytes;
+  late CameraController _cameraController;
+  late Future<void> _initializeControllerFuture;
 
   @override
   void initState() {
@@ -31,14 +38,35 @@ class _NoteDialogState extends State<NoteDialog> {
       _titleController.text = widget.note!.title;
       _descriptionController.text = widget.note!.description;
     }
+    initializeCamera();
   }
 
-  Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future<void> initializeCamera() async {
+    final cameras = await availableCameras();
+    final firstCamera = cameras.first;
+
+    _cameraController = CameraController(
+      firstCamera,
+      ResolutionPreset.high,
+    );
+
+    _initializeControllerFuture = _cameraController.initialize();
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _cameraController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
       setState(() {
         _imageFile = pickedFile;
+        _imageBytes = bytes;
       });
     }
   }
@@ -77,24 +105,48 @@ class _NoteDialogState extends State<NoteDialog> {
             padding: EdgeInsets.only(top: 20),
             child: Text('Image: '),
           ),
-          Expanded(
-            child: _imageFile != null
-                ? Image.network(
-                    _imageFile!.path,
-                    fit: BoxFit.cover,
-                  )
-                : (widget.note?.imageUrl != null &&
-                        Uri.parse(widget.note!.imageUrl!).isAbsolute
-                    ? Image.network(
-                        widget.note!.imageUrl!,
-                        fit: BoxFit.cover,
-                      )
-                    : Container()),
-          ),
-          TextButton(
-            onPressed: _pickImage,
-            child: const Text("Pick Image"),
-          ),
+          if (_imageBytes != null)
+              SizedBox(
+                height: 200, // Set a fixed height for the image container
+                child: Image.memory(
+                  _imageBytes!,
+                  fit: BoxFit.cover,
+                ),
+              )
+            else if (widget.note?.imageUrl != null &&
+                Uri.parse(widget.note!.imageUrl!).isAbsolute)
+              SizedBox(
+                height: 200, // Set a fixed height for the image container
+                child: Image.network(
+                  widget.note!.imageUrl!,
+                  fit: BoxFit.cover,
+                ),
+              )
+            else
+              Container(),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () => _pickImage(ImageSource.gallery),
+                  child: const Text("Gallery"),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final XFile? image = await _cameraController.takePicture();
+                    if (image != null) {
+                      final directory =
+                          await getApplicationDocumentsDirectory();
+                      final path = '${directory.path}/${DateTime.now()}.png';
+                      await image.saveTo(path);
+                      setState(() {
+                        _imageFile = XFile(path);
+                      });
+                    }
+                  },
+                  child: const Text("Camera"),
+                ),
+              ],
+            ),
           TextButton(
             onPressed: _getLocation,
             child: const Text("Get Location"),
@@ -102,7 +154,7 @@ class _NoteDialogState extends State<NoteDialog> {
           Text(
             _position?.latitude != null && _position?.longitude != null
                 ? 'Current Position : ${_position!.longitude.toString()}, ${_position!.latitude.toString()}'
-                : '',
+                :'',
             textAlign: TextAlign.start,
           )
         ],
